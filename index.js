@@ -78,7 +78,7 @@ passport.use(new
 
 app.get("/auth/google", passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get('/google/callback',
+app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/fallo' }),
     function (req, res) {
         res.redirect('/good');
