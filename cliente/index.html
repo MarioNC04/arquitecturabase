@@ -1,11 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
- <meta charset="utf-8">
- <meta name="viewport" content="width=device-width, initial-scale=1">
- <title>Arquitectura base</title>
-<script src="./modelo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Arquitectura base</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
+
 <body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Sistema</a>
+        <div id="registro"></div>
+      </div>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#" id="linkLogin">Inicio sesión</a></li>
+  <li><a href="/cliente/registro.html" id="linkRegistro">Registrarse</a></li>
+        <li><a href="#" id="linkSalir">Salir</a></li>
+      </ul>
+      <p id="nav-welcome" class="navbar-text navbar-right" style="margin-right:10px;"></p>
+    </div>
+    <div
+        id="g_id_onload"
+        data-client_id="261153513365-md60sklsiekqo4ojpgpee533shkjk874.apps.googleusercontent.com"
+        data-login_uri="http://localhost:3000/oneTap/callback"
+        data-skip_prompt_cookie="nick"
+      ></div>
+  </nav>
+
+  <div class="container-fluid">
+    <h3>Arquitectura base</h3>
+    <div id="au"></div>
+  </div>
+  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="./cliente/clienteRest.js"></script>
+  <script src="./cliente/controlWeb.js"></script>
+
+  <script>
+    cw=new ControlWeb();
+    rest=new ClienteRest(cw);
+    // comprobar sesión debe ejecutarse a través del objeto rest
+    rest.comprobarSesion();
+
+    // bind navbar actions
+    $('#linkSalir').on('click', function(e){ e.preventDefault(); cw.salir(); });
+    $('#linkLogin').on('click', function(e){ e.preventDefault(); cw.mostrarLogin(); });
+  // 'Registrarse' is a normal link to a dedicated registration page.
+  </script> 
 </body>
 </html>

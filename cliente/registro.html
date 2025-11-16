@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro - Arquitectura base</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div class="container" style="max-width:600px; margin-top:40px;">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Registro de usuario</h3>
+      </div>
+      <div class="panel-body">
+        <form id="fmRegistro">
+          <div class="form-group">
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" class="form-control" placeholder="Apellidos" id="apellidos" name="apellidos">
+          </div>
+          <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" class="form-control" placeholder="Nombre" id="nombre" name="nombre">
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" placeholder="Introduce email" id="email" name="email">
+          </div>
+          <div class="form-group">
+            <label for="pwd">Password:</label>
+            <input type="password" class="form-control" placeholder="Introduce password" id="pwd" name="pwd">
+          </div>
+          <div class="form-group">
+            <label for="pwd2">Confirmar password:</label>
+            <input type="password" class="form-control" placeholder="Repite password" id="pwd2" name="pwd2">
+          </div>
+          <button type="submit" id="btnRegistro" class="btn btn-primary">Registrar</button>
+          <a href="/" class="btn btn-default">Volver</a>
+        </form>
+      </div>
+    </div>
+    <div id="msg" style="margin-top:10px;"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script>
+    $(function () {
+      $('#fmRegistro').on('submit', function (e) {
+        e.preventDefault();
+        const apellidos = $('#apellidos').val().trim();
+        const nombre = $('#nombre').val().trim();
+        const email = $('#email').val().trim();
+        const pwd = $('#pwd').val();
+        const pwd2 = $('#pwd2').val();
+
+        if (!nombre) { alert('Introduce el nombre'); return; }
+        if (!email) { alert('Introduce el email'); return; }
+        if (!pwd) { alert('Introduce la contraseña'); return; }
+        if (pwd !== pwd2) { alert('Las contraseñas no coinciden'); return; }
+
+        $('#btnRegistro').prop('disabled', true).text('Registrando...');
+
+        if (typeof rest !== 'undefined' && typeof rest.registrarUsuario === 'function') {
+          rest.registrarUsuario(email, pwd, nombre, apellidos, function (success, info) {
+            if (success) {
+              $('#msg').html('<div class="alert alert-success">Registro correcto. Bienvenido, ' + info + '.</div>');
+              setTimeout(function () { window.location = '/'; }, 700);
+            } else {
+              $('#msg').html('<div class="alert alert-danger">Error en el registro. Comprueba la consola.</div>');
+            }
+            $('#btnRegistro').prop('disabled', false).text('Registrar');
+          });
+        } else {
+          // fallback to AJAX if rest not available
+          const payload = { nombre: nombre, apellidos: apellidos, email: email, password: pwd };
+          $.ajax({
+            type: 'POST',
+            url: '/registrarUsuario',
+            data: JSON.stringify(payload),
+            contentType: 'application/json',
+            success: function (data) {
+              if (data && typeof data.nick !== 'undefined' && data.nick != -1) {
+                document.cookie = 'nick=' + encodeURIComponent(data.nick) + ';path=/';
+                $('#msg').html('<div class="alert alert-success">Registro correcto. Bienvenido, ' + data.nick + '.</div>');
+                setTimeout(function () { window.location = '/'; }, 800);
+              } else {
+                $('#msg').html('<div class="alert alert-danger">El email ya está en uso o hubo un error en el registro.</div>');
+              }
+            },
+            error: function (xhr, status, err) {
+              console.error('Error en la petición:', status, err, xhr.status, xhr.responseText);
+              $('#msg').html('<div class="alert alert-danger">Error en la petición al servidor. Estado: ' + xhr.status + '</div>');
+            },
+            complete: function () {
+              $('#btnRegistro').prop('disabled', false).text('Registrar');
+            }
+          });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
