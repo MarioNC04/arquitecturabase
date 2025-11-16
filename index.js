@@ -81,11 +81,14 @@ app.get("/auth/google", passport.authenticate('google', { scope: ['profile', 'em
 app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/fallo' }),
     function (req, res) {
+        // Passport ya llamó a serializeUser con el profile completo
+        // Ahora req.user debería tener el email
         res.redirect('/good');
     });
 
 app.get("/good", haIniciado, async function (request, response) {
-    let email = request.user.emails[0].value;
+    // request.user es { email: 'email@domain.com' } después de deserialización
+    let email = request.user.email;
 
     await sistema.usuarioGoogle({ "email": email }, function (obj) {
         console.log('Usuario Google obtenido/creado:', obj.email);
