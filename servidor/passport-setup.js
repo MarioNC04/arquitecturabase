@@ -18,7 +18,7 @@ if (googleClientID && googleSecret) {
     passport.use(new GoogleStrategy({
         clientID: googleClientID,
         clientSecret: googleSecret,
-        callbackURL: baseUrl + "/google/callback"
+        callbackURL: baseUrl + "/auth/google/callback"
     },
         function (accessToken, refreshToken, profile, done) {
             return done(null, profile);
